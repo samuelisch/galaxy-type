@@ -1,8 +1,8 @@
 let alphabet = 'abcdefghijklmnopqrstuvwxyz';
 let solvedChars = [];
 let displayedChars = [];
-let score = 0;
-let gameTime; // variable for spawn timing
+let score = 10000, streak = 0;
+let gameTime, speed = 1; // variable for spawn timing
 let gameOver = false;
 
 const canvas = document.querySelector('.display');
@@ -46,6 +46,50 @@ const CharFactory = function() {
   }
 }
 
+const addScore = () => {
+  const bonus = Math.floor(streak / 10) + 1;
+  score = score + (10 * speed) + (10 * bonus);
+  streak += 1;
+  document.querySelector('.score').textContent = score;
+}
+
+// function to check score to level and increase speed
+const checkIncreaseSpeed = () => {
+  if (speed === 6 || score <= 200) {
+    return;
+  }
+
+  if (score <= 500) {
+    if (speed === 2) return;
+    console.log('changing speed to 2')
+    speed = 2;
+    clearInterval(gameTime);
+    spawnChars(900);
+  } else if (score <= 2000) {
+    if (speed === 3) return;
+    console.log('changing speed to 3')
+    speed = 3;
+    clearInterval(gameTime);
+    spawnChars(750);
+  } else if (score <= 5000) {
+    if (speed === 4) return;
+    console.log('changing speed to 4')
+    speed = 4;
+    clearInterval(gameTime);
+    spawnChars(550);
+  } else if (score <= 10000) {
+    if (speed === 5) return;
+    console.log('changing speed to 5')
+    speed = 5;
+    clearInterval(gameTime);
+    spawnChars(450);
+  } else {
+    speed = 6;
+    clearInterval(gameTime);
+    spawnChars(300);
+  }
+}
+
 const checkKey = (e) => {
   const keyCode = e.keyCode;
   const char = String.fromCharCode(keyCode + 32);
@@ -53,9 +97,12 @@ const checkKey = (e) => {
   const instance = displayedChars.find(charInstance => charInstance.text === char)
   if (instance) {
     console.log('solved');
-    score += 10;
     solvedChars.push(instance.id);
-    document.querySelector('.score').textContent = score;
+
+    addScore()
+    checkIncreaseSpeed();
+  } else {
+    streak = 0;
   }
 }
 
@@ -116,10 +163,14 @@ const newChar = () => {
   loop();
 }
 
-const gameStart = () => {
+const spawnChars = (time=1000) => {
   gameTime = setInterval(() => {
     newChar();
-  }, 500);
+  }, time);
+}
+
+const gameStart = () => {
+  spawnChars()
 }
 
 drawCanvas();
