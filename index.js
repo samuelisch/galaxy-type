@@ -1,7 +1,7 @@
 let alphabet = 'abcdefghijklmnopqrstuvwxyz';
 let solvedChars = [];
 let displayedChars = [];
-let score = 10000, streak = 0;
+let score = 0, streak = 0;
 let gameTime, speed = 1; // variable for spawn timing
 let gameOver = false;
 
@@ -106,8 +106,8 @@ const checkKey = (e) => {
   }
 }
 
-const showMainMenu = () => {
-
+const hideMainMenu = () => {
+  document.querySelector('.menu-container').style.opacity = '0%';
 }
 
 const drawCanvas = () => {
@@ -170,11 +170,12 @@ const spawnChars = (time=1000) => {
 }
 
 const gameStart = () => {
+  hideMainMenu()
   spawnChars()
 }
 
 drawCanvas();
-document.querySelector('.test-word').addEventListener('click', newChar);
+// document.querySelector('.test-word').addEventListener('click', newChar);
 document.querySelector('.game-start-btn').addEventListener('click', gameStart);
 window.addEventListener('resize', drawCanvas);
 window.addEventListener('keydown', checkKey);
