@@ -7,13 +7,15 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  background: rgb(245, 245, 245);
 }
 
 .game-container {
   position: relative;
   width: 90%;
+  margin: 0 auto;
   max-width: 1024px;
-  height: 600px;
+  height: 650px;
   box-shadow: 1px 1px 6px 1px black;
 }
 
@@ -42,9 +44,5 @@ body {
 
 .score {
   margin-top: 50px;
-  font-size: 3rem;
-}
-
-.balloon {
-  
+  font-size: 2rem;
 }

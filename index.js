@@ -1,71 +1,61 @@
-let randomWords = [];
+let alphabet = 'abcdefghijklmnopqrstuvwxyz';
+let solvedChars = [];
+let displayedChars = [];
+let score = 0;
+let gameTime; // variable for spawn timing
+let gameOver = false;
 
 const canvas = document.querySelector('.display');
 const context = canvas.getContext('2d');
 
-const fetchRandomWords = async () => {
-  const response = await fetch('https://random-word-api.herokuapp.com/word?number=10000&swear=0')
-  const words = await response.json();
-  randomWords = words;
-  console.log('done');
+const generateRandomId = () => {
+  return Math.floor(Math.random() * 100000000);
 }
 
-const getRandomWord = () => {
-  return randomWords[Math.floor(Math.random() * 1000)];
+const getRandomChar = () => {
+  return alphabet[Math.floor(Math.random() * alphabet.length)];
 }
 
 const getRandomWidth = () => {
-  const maxWidth = document.querySelector('.game-container').clientWidth - 200; //prevent overflowX
-  return Math.floor(Math.random() * maxWidth) + 5;
+  const maxWidth = document.querySelector('.game-container').clientWidth - 20; //prevent overflowX
+  return Math.floor(Math.random() * maxWidth) + 10;
 }
 
-const WordFactory = function() {
-  let text = getRandomWord();
+const CharFactory = function() {
+  let id = generateRandomId();
+  let text = getRandomChar();
   let x = getRandomWidth();
   let y = 20;
-  const width = context.measureText(text).width;
-  let metrics = context.measureText(text);
+  const metrics = context.measureText(text);
 
-  const drawWord = () => {
+  const drawChar = (addHeight) => {
     context.beginPath();
     context.fillStyle = "white";
     context.font = '25px Helvetica';
-    context.fillText(text, x, y);
-  }
-
-  const update = () => {
-    y += 2;
+    context.textAlign = 'center';
+    context.fillText(text, x, y + addHeight);
   }
 
   return {
+    id,
     text,
     x, 
     y,
     metrics,
-    width,
-    drawWord,
-    update
+    drawChar
   }
 }
 
 const checkKey = (e) => {
-  if (gameEnd) {
-    console.log('Game ended! restart the game');
-    return;
-  }
-  if (!gameStart) {
-    gameStart = true;
-  }
   const keyCode = e.keyCode;
   const char = String.fromCharCode(keyCode + 32);
 
-  if (char === lettersToMatch[0]) {
-    removeChar();
-    createRandomChars();
-    updateScore(10);
-  } else {
-    gameEnd = true;
-    console.log(`You entered a wrong key! Final score: ${score}`);
+  const instance = displayedChars.find(charInstance => charInstance.text === char)
+  if (instance) {
+    console.log('solved');
+    score += 10;
+    solvedChars.push(instance.id);
+    document.querySelector('.score').textContent = score;
   }
 }
 
@@ -80,29 +70,60 @@ const drawCanvas = () => {
   canvas.height = container.clientHeight;
 }
 
-const newWord = () => {
-  console.log('creating word');
-  const word = WordFactory();
-  const actualHeight = word.metrics.actualBoundingBoxAscent + word.metrics.actualBoundingBoxDescent;
+const removeFromDisplayArray = (charId) => {
+  displayedChars = displayedChars.filter(charInstance => charInstance.id !== charId);
+}
+
+const newChar = () => {
+  const char = CharFactory();
+  displayedChars.push(char);
+  const actualHeight = char.metrics.actualBoundingBoxAscent + char.metrics.actualBoundingBoxDescent;
   let accumulateY = 0;
 
   const loop = () => {
-    context.clearRect(word.x, 0, word.x + word.width, word.y + actualHeight + accumulateY);
+    if (gameOver) {
+      return;
+    }
+    // clear previous position
+    const addedHeight = char.y + actualHeight + accumulateY;
+    context.clearRect(char.x - 10, 0, char.x + char.metrics.width, addedHeight);
 
-    word.drawWord();
-    word.update();
+    if (solvedChars.includes(char.id)) {
+      // char solved
+      // remove from solvedChar to avoid clogging it up
+      solvedChars = solvedChars.filter(id => id !== char.id);
+      // remove from displayChars
+      removeFromDisplayArray(char.id);
+      return;
+    }
+    if (addedHeight > canvas.height) {
+      // minus health
+      // remove word instance from display array
+      removeFromDisplayArray(char.id);
+      console.log("word missed! minus 1 health.");
+      console.log('Game over! for now.')
+      gameOver = true;
+      clearInterval(gameTime);
+      return;
+    }
+    // continue with loop, create new position
+    char.drawChar(accumulateY);
     accumulateY += 2;
 
-    requestAnimationFrame(loop);
+    requestAnimationFrame(loop); 
   }
 
   loop();
 }
 
-fetchRandomWords();
+const gameStart = () => {
+  gameTime = setInterval(() => {
+    newChar();
+  }, 500);
+}
 
-document.querySelector('.test-word').addEventListener('click', newWord)
 drawCanvas();
+document.querySelector('.test-word').addEventListener('click', newChar);
+document.querySelector('.game-start-btn').addEventListener('click', gameStart);
 window.addEventListener('resize', drawCanvas);
-// createRandomChars();
-// window.addEventListener('keydown', checkKey)
+window.addEventListener('keydown', checkKey);
