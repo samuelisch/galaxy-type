@@ -18,6 +18,7 @@ body {
   max-width: 1024px;
   height: 650px;
   box-shadow: 1px 1px 6px 1px black;
+  overflow: hidden;
 }
 
 .canvas-container {
@@ -29,6 +30,28 @@ body {
   background: url(./assets/space.png);
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.bottom-bar {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  font-size: 1.5rem;
+  padding: 5px 3px;
+  z-index: 3;
+  text-align: center;
+}
+
+.earth {
+  position: absolute;
+  width: 4000px;
+  bottom: -3850px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.earth-img {
+  width: 100%;
 }
 
 .menu-container {

@@ -4,6 +4,7 @@ let displayedChars = [];
 let score = 0, streak = 0;
 let gameTime, speed = 1; // variable for spawn timing
 let gameOver = false;
+let health = 10;
 
 const canvas = document.querySelector('.display');
 const context = canvas.getContext('2d');
@@ -169,13 +170,18 @@ const newChar = () => {
       return;
     }
     if (addedHeight > canvas.height) {
-      // minus health
       // remove word instance from display array
       removeFromDisplayArray(char.id);
       console.log("word missed! minus 1 health.");
-      console.log('Game over! for now.')
-      clearInterval(gameTime);
-      setGameOver();
+      health -= 1;
+      document.querySelector('.health').textContent = health;
+      console.log(health);
+      // game over if not enough health
+      if (health <= 0) {
+        console.log('game over!');
+        clearInterval(gameTime);
+        setGameOver();
+      }
       return;
     }
     // continue with loop, create new position
