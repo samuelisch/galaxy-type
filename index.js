@@ -112,7 +112,7 @@ const checkKey = (e) => {
 
 const resetGame = () => {
   context.clearRect(0, 0, canvas.width, canvas.height);
-  score = 0
+  score = 0;
   streak = 0;
   speed = 1;
   gameOver = false;
@@ -131,6 +131,17 @@ const backToMainMenu = () => {
 const hideMainMenu = () => {
   document.querySelector('.menu-container').style.opacity = '0%';
   document.querySelector('.menu').style.display = 'none';
+}
+
+const damageHealth = () => {
+  health -= 1;
+  document.querySelector('.health').textContent = health;
+  // activate damange DOM
+  const dmgContainer = document.querySelector('.damage-container')
+  dmgContainer.classList.add('damaged');
+  setTimeout(() => {
+    dmgContainer.classList.remove('damaged');
+  }, 50);
 }
 
 const setGameOver = () => {
@@ -180,10 +191,7 @@ const newChar = () => {
     if (addedHeight > canvas.height) {
       // remove word instance from display array
       removeFromDisplayArray(char.id);
-      console.log("word missed! minus 1 health.");
-      health -= 1;
-      document.querySelector('.health').textContent = health;
-      console.log(health);
+      damageHealth();
       // game over if not enough health
       if (health <= 0) {
         console.log('game over!');
