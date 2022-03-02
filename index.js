@@ -1,7 +1,7 @@
 let alphabet = 'abcdefghijklmnopqrstuvwxyz';
 let solvedChars = [];
 let displayedChars = [];
-let score = 10000, streak = 0;
+let score = 0, streak = 0;
 let gameTime, speed = 1; // variable for spawn timing
 let gameOver = false;
 let health = 10;
