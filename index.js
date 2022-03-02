@@ -25,7 +25,7 @@ const CharFactory = function() {
   let id = generateRandomId();
   let text = getRandomChar();
   let x = getRandomWidth();
-  let y = 20;
+  let y = -5;
   const metrics = context.measureText(text);
 
   const drawChar = (addHeight) => {
@@ -50,7 +50,6 @@ const addScore = () => {
   const bonus = Math.floor(streak / 10) + 1;
   score = score + (10 * speed) + (10 * bonus);
   streak += 1;
-  document.querySelector('.score').textContent = score;
 }
 
 // function to check score to level and increase speed
@@ -106,8 +105,34 @@ const checkKey = (e) => {
   }
 }
 
+const resetGame = () => {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  score = 0
+  streak = 0;
+  speed = 1;
+  gameOver = false;
+}
+
+const backToMainMenu = () => {
+  resetGame();
+  document.querySelector('.gameover').style.display = 'none';
+  document.querySelector('.main').style.display = 'flex';
+}
+
 const hideMainMenu = () => {
   document.querySelector('.menu-container').style.opacity = '0%';
+  document.querySelector('.menu').style.display = 'none';
+}
+
+const setGameOver = () => {
+  gameOver = true;
+  // reset all
+  solvedChars = [];
+  displayedChars = [];
+  // display gameover 
+  document.querySelector('.score').textContent = score;
+  document.querySelector('.menu-container').style.opacity = '100%';
+  document.querySelector('.gameover').style.display = 'flex';
 }
 
 const drawCanvas = () => {
@@ -149,13 +174,13 @@ const newChar = () => {
       removeFromDisplayArray(char.id);
       console.log("word missed! minus 1 health.");
       console.log('Game over! for now.')
-      gameOver = true;
       clearInterval(gameTime);
+      setGameOver();
       return;
     }
     // continue with loop, create new position
     char.drawChar(accumulateY);
-    accumulateY += 2;
+    accumulateY += 1.9;
 
     requestAnimationFrame(loop); 
   }
@@ -169,13 +194,18 @@ const spawnChars = (time=1000) => {
   }, time);
 }
 
-const gameStart = () => {
-  hideMainMenu()
-  spawnChars()
+const gameStart = (restart) => {
+  if (restart) {
+    resetGame();
+  }
+  hideMainMenu();
+  spawnChars();
 }
 
 drawCanvas();
 // document.querySelector('.test-word').addEventListener('click', newChar);
 document.querySelector('.game-start-btn').addEventListener('click', gameStart);
+document.querySelector('.game-restart-btn').addEventListener('click',() => gameStart(true));
+document.querySelector('.main-menu-btn').addEventListener('click', backToMainMenu);
 window.addEventListener('resize', drawCanvas);
 window.addEventListener('keydown', checkKey);

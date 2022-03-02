@@ -13,13 +13,18 @@
         <canvas class="display"></canvas>
       </div>
       <div class="menu-container">
-        <div class="menu">
+        <div class="menu main">
           <span class="title">GALAXY TYPE</span>
           <button class="menu-btn game-start-btn">Start game</button>
           <button class="menu-btn leaderboard-btn">View scores</button>
         </div>
+        <div class="menu gameover">
+          <span class="end-title">GAME OVER</span>
+          <span>Final score: <span class="score">0</span></span>
+          <button class="menu-btn game-restart-btn">Try again</button>
+          <button class="menu-btn main-menu-btn">Back to main</button>
+        </div>
       </div>
-      <div>Score: <span class="score">0</span></div>
     </div>
     <script src="index.js"></script>
   </body>
