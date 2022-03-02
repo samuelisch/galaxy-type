@@ -112,6 +112,7 @@ const resetGame = () => {
   streak = 0;
   speed = 1;
   gameOver = false;
+  health = 10;
 }
 
 const backToMainMenu = () => {
