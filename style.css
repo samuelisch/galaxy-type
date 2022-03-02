@@ -39,7 +39,9 @@ body {
   font-size: 1.5rem;
   padding: 5px 3px;
   z-index: 3;
-  text-align: center;
+  display: flex;
+  justify-content: space-around;
+  background: rgba(0, 0, 0, 0.3)
 }
 
 .earth {

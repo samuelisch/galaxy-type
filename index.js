@@ -1,10 +1,11 @@
 let alphabet = 'abcdefghijklmnopqrstuvwxyz';
 let solvedChars = [];
 let displayedChars = [];
-let score = 0, streak = 0;
+let score = 10000, streak = 0;
 let gameTime, speed = 1; // variable for spawn timing
 let gameOver = false;
 let health = 10;
+let particles = [];
 
 const canvas = document.querySelector('.display');
 const context = canvas.getContext('2d');
@@ -51,6 +52,7 @@ const addScore = () => {
   const bonus = Math.floor(streak / 10) + 1;
   score = score + (10 * speed) + (10 * bonus);
   streak += 1;
+  document.querySelector('.score-tracker').textContent = score;
 }
 
 // function to check score to level and increase speed
@@ -61,25 +63,21 @@ const checkIncreaseSpeed = () => {
 
   if (score <= 500) {
     if (speed === 2) return;
-    console.log('changing speed to 2')
     speed = 2;
     clearInterval(gameTime);
     spawnChars(900);
   } else if (score <= 2000) {
     if (speed === 3) return;
-    console.log('changing speed to 3')
     speed = 3;
     clearInterval(gameTime);
     spawnChars(750);
   } else if (score <= 5000) {
     if (speed === 4) return;
-    console.log('changing speed to 4')
     speed = 4;
     clearInterval(gameTime);
     spawnChars(550);
   } else if (score <= 10000) {
     if (speed === 5) return;
-    console.log('changing speed to 5')
     speed = 5;
     clearInterval(gameTime);
     spawnChars(450);
@@ -87,6 +85,12 @@ const checkIncreaseSpeed = () => {
     speed = 6;
     clearInterval(gameTime);
     spawnChars(300);
+  }
+
+  // update level in DOM
+  const level = document.querySelector('.level');
+  if (parseInt(level.textContent) !== speed) {
+    level.textContent = speed;
   }
 }
 
@@ -113,6 +117,9 @@ const resetGame = () => {
   speed = 1;
   gameOver = false;
   health = 10;
+  document.querySelector('.level').textContent = 1;
+  document.querySelector('.health').textContent = 10;
+  document.querySelector('.score-tracker').textContent = 0;
 }
 
 const backToMainMenu = () => {
@@ -167,7 +174,7 @@ const newChar = () => {
       // remove from solvedChar to avoid clogging it up
       solvedChars = solvedChars.filter(id => id !== char.id);
       // remove from displayChars
-      removeFromDisplayArray(char.id);
+      removeFromDisplayArray(char.id)
       return;
     }
     if (addedHeight > canvas.height) {
@@ -210,7 +217,6 @@ const gameStart = (restart) => {
 }
 
 drawCanvas();
-// document.querySelector('.test-word').addEventListener('click', newChar);
 document.querySelector('.game-start-btn').addEventListener('click', gameStart);
 document.querySelector('.game-restart-btn').addEventListener('click',() => gameStart(true));
 document.querySelector('.main-menu-btn').addEventListener('click', backToMainMenu);
