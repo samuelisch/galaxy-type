@@ -286,10 +286,8 @@ const spawnChars = (time=1000) => {
   }, time);
 }
 
-const gameStart = (restart) => {
-  if (restart) {
-    resetGame();
-  }
+const gameStart = () => {
+  resetGame();
   gameStarted = true;
   hideMainMenu();
   spawnChars();
@@ -298,7 +296,7 @@ const gameStart = (restart) => {
 getFromLocalStorage();
 drawCanvas();
 document.querySelector('.game-start-btn').addEventListener('click', gameStart);
-document.querySelector('.game-restart-btn').addEventListener('click',() => gameStart(true));
+document.querySelector('.game-restart-btn').addEventListener('click', gameStart);
 document.querySelectorAll('.main-menu-btn').forEach(btn => btn.addEventListener('click', backToMainMenu));
 document.querySelector('.leaderboard-btn').addEventListener('click', viewLeaderboard)
 window.addEventListener('resize', drawCanvas);
