@@ -181,6 +181,8 @@ const resetGame = () => {
   document.querySelector('.level').textContent = 1;
   document.querySelector('.health').textContent = 10;
   document.querySelector('.score-tracker').textContent = 0;
+  document.querySelector('.score').textContent = 0;
+  document.querySelector('.accuracy').textContent = 0;
 }
 
 const arrangeScores = () => {
