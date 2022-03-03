@@ -1,4 +1,4 @@
-let alphabet = 'abcdefghijklmnopqrstuvwxyz';
+const alphabet = 'abcdefghijklmnopqrstuvwxyz';
 let solvedChars = [];
 let displayedChars = [];
 let score = 0, streak = 0;
@@ -11,21 +11,19 @@ let matchCounter = 0;
 let totalCounter = 0;
 let scoreStorage = [];
 
+const canvas = document.querySelector('.display');
+const context = canvas.getContext('2d');
+
 // check if localStorage exists, fill up store if it exists
 const getFromLocalStorage = () => {
   if (localStorage.getItem('store')) {
     scoreStorage = JSON.parse(localStorage.getItem('store'));
-  } else {
-    console.log('nothing in localStorage');
   }
 }
 
 const setToLocalStorage = () => {
   localStorage.setItem('store', JSON.stringify(scoreStorage));
 }
-
-const canvas = document.querySelector('.display');
-const context = canvas.getContext('2d');
 
 const generateRandomId = () => {
   return Math.floor(Math.random() * 100000000);
@@ -65,11 +63,11 @@ const CharFactory = function() {
   }
 }
 
-const addScore = () => {
-  const bonus = Math.floor(streak / 10) + 1;
-  score = score + (10 * speed) + (10 * bonus);
-  streak += 1;
-  document.querySelector('.score-tracker').textContent = score;
+const drawCanvas = () => {
+  const container = document.querySelector('.canvas-container');
+  const canvas = document.querySelector('.display')
+  canvas.width = container.clientWidth;
+  canvas.height = container.clientHeight;
 }
 
 // function to check score to level and increase speed
@@ -111,6 +109,13 @@ const checkIncreaseSpeed = () => {
   }
 }
 
+const addScore = () => {
+  const bonus = Math.floor(streak / 10) + 1;
+  score = score + (10 * speed) + (10 * bonus);
+  streak += 1;
+  document.querySelector('.score-tracker').textContent = score;
+}
+
 const checkKey = (e) => {
   if (!gameStarted) {
     return;
@@ -131,6 +136,40 @@ const checkKey = (e) => {
   }
 }
 
+const backToMainMenu = () => {
+  resetGame();
+  document.querySelectorAll('.menu').forEach(menu => menu.style.display = 'none');
+  document.querySelector('.main').style.display = 'flex';
+}
+
+const hideMainMenu = () => {
+  document.querySelector('.menu-container').style.opacity = '0%';
+  document.querySelector('.menu').style.display = 'none';
+}
+
+const viewLeaderboard = () => {
+  // clear current list for leaderboard
+  document.querySelectorAll('.leaderboard-score').forEach(score => score.remove());
+  // create and append new list elements to leaderboard
+  scoreStorage.forEach(score => {
+    const listElement = document.createElement('li');
+    listElement.className = 'leaderboard-score';
+    const listScore = document.createElement('span');
+    listScore.className = 'left';
+    listScore.textContent = score.score;
+    const listAccuracy = document.createElement('span');
+    listAccuracy.className = 'right';
+    listAccuracy.textContent = score.accuracy + '%';
+
+    listElement.append(listScore, listAccuracy);
+    document.querySelector('.score-list').appendChild(listElement);
+  })
+
+  // hide main menu, view leaderboard
+  document.querySelector('.leaderboard').style.display = 'flex';
+  document.querySelector('.main').style.display = 'none';
+}
+
 const resetGame = () => {
   context.clearRect(0, 0, canvas.width, canvas.height);
   score = 0;
@@ -144,33 +183,12 @@ const resetGame = () => {
   document.querySelector('.score-tracker').textContent = 0;
 }
 
-const backToMainMenu = () => {
-  resetGame();
-  document.querySelector('.gameover').style.display = 'none';
-  document.querySelector('.main').style.display = 'flex';
-}
-
-const hideMainMenu = () => {
-  document.querySelector('.menu-container').style.opacity = '0%';
-  document.querySelector('.menu').style.display = 'none';
-}
-
-const damageHealth = () => {
-  health -= 1;
-  document.querySelector('.health').textContent = health;
-  // activate damange DOM
-  const dmgContainer = document.querySelector('.damage-container')
-  dmgContainer.classList.add('damaged');
-  setTimeout(() => {
-    dmgContainer.classList.remove('damaged');
-  }, 50);
-}
-
 const arrangeScores = () => {
   scoreStorage.sort((a, b) => b.score - a.score);
 }
 
 const saveScore = (playerScore, playerAccuracy) => {
+  if (playerScore <= 0 ) return;
   const storeObj = { score: playerScore, accuracy: playerAccuracy }
   scoreStorage.push(storeObj);
   arrangeScores();
@@ -188,7 +206,7 @@ const displayGameover = () => {
   }
   // calculate accuracy
   const accuracy = parseInt((matchCounter / totalCounter) * 100);
-  document.querySelector('.accuracy').textContent = accuracy
+  document.querySelector('.accuracy').textContent = accuracy || 0;
   document.querySelector('.menu-container').style.opacity = '100%';
   document.querySelector('.gameover').style.display = 'flex';
   saveScore(score, accuracy);
@@ -204,11 +222,15 @@ const setGameOver = () => {
   displayGameover();
 }
 
-const drawCanvas = () => {
-  const container = document.querySelector('.canvas-container');
-  const canvas = document.querySelector('.display')
-  canvas.width = container.clientWidth;
-  canvas.height = container.clientHeight;
+const damageHealth = () => {
+  health -= 1;
+  document.querySelector('.health').textContent = health;
+  // activate damange DOM
+  const dmgContainer = document.querySelector('.damage-container')
+  dmgContainer.classList.add('damaged');
+  setTimeout(() => {
+    dmgContainer.classList.remove('damaged');
+  }, 50);
 }
 
 const removeFromDisplayArray = (charId) => {
@@ -277,7 +299,7 @@ getFromLocalStorage();
 drawCanvas();
 document.querySelector('.game-start-btn').addEventListener('click', gameStart);
 document.querySelector('.game-restart-btn').addEventListener('click',() => gameStart(true));
-document.querySelector('.main-menu-btn').addEventListener('click', backToMainMenu);
-
+document.querySelectorAll('.main-menu-btn').forEach(btn => btn.addEventListener('click', backToMainMenu));
+document.querySelector('.leaderboard-btn').addEventListener('click', viewLeaderboard)
 window.addEventListener('resize', drawCanvas);
 window.addEventListener('keydown', checkKey);

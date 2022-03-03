@@ -96,9 +96,40 @@ body {
   transition: display .5s;
 }
 
-.gameover,
+.gameover {
+  display: none;
+}
+
 .leaderboard {
   display: none;
+  height: 500px;
+}
+
+.score-list {
+  height: 320px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 80%;
+  overflow-y: scroll;
+}
+
+.list-header {
+  font-weight: bold;
+}
+
+.score-list li {
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.leaderboard-score {
+  border-bottom: 1px solid rgb(235, 235, 235);
+}
+
+.leaderboard-score:nth-child(odd) {
+  background-color: rgba(150, 150, 150, 0.2);
 }
 
 .title {
