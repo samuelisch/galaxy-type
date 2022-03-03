@@ -295,7 +295,7 @@ const newChar = () => {
     requestAnimationFrame(loop);
   };
 
-  loop()
+  loop();
 };
 
 const spawnChars = (time = 1000) => {
