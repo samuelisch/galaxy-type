@@ -209,7 +209,7 @@ const displayGameover = () => {
     }, 1)
   }
   // calculate accuracy
-  const accuracy = parseInt((matchCounter / totalCounter) * 100);
+  const accuracy = totalCounter ? parseInt((matchCounter / totalCounter) * 100) : 0;
   document.querySelector('.accuracy').textContent = accuracy || 0;
   document.querySelector('.menu-container').style.opacity = '100%';
   document.querySelector('.gameover').style.display = 'flex';
