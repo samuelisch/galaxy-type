@@ -209,11 +209,13 @@ const displayGameover = () => {
     }, 1)
   }
   // calculate accuracy
-  const accuracy = parseInt((matchCounter / totalCounter) * 100);
-  document.querySelector('.accuracy').textContent = accuracy || 0;
+  if (totalCounter) {
+    const accuracy = parseInt((matchCounter / totalCounter) * 100);
+    document.querySelector('.accuracy').textContent = accuracy;
+    saveScore(score, accuracy);
+  }
   document.querySelector('.menu-container').style.opacity = '100%';
   document.querySelector('.gameover').style.display = 'flex';
-  saveScore(score, accuracy);
 }
 
 const setGameOver = () => {
