@@ -6,7 +6,6 @@ let gameTime, speed = 1; // variable for spawn timing
 let gameOver = false;
 let gameStarted = false;
 let health = 10;
-let particles = [];
 let matchCounter = 0;
 let totalCounter = 0;
 let scoreStorage = [];
@@ -176,8 +175,11 @@ const resetGame = () => {
   streak = 0;
   speed = 1;
   gameOver = false;
+  gameStarted = false;
   health = 10;
   matchStore = {};
+  matchCounter = 0;
+  totalCounter = 0;
   document.querySelector('.level').textContent = 1;
   document.querySelector('.health').textContent = 10;
   document.querySelector('.score-tracker').textContent = 0;
@@ -201,7 +203,7 @@ const displayGameover = () => {
   if (score !== 0) {
     i = 0
     const scoreInterval = setInterval(() => {
-      if (i === score) clearInterval(scoreInterval);
+      if (i >= score) clearInterval(scoreInterval);
       document.querySelector('.score').textContent = i;
       i += 10;
     }, 1)
