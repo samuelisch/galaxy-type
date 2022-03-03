@@ -4,8 +4,25 @@ let displayedChars = [];
 let score = 0, streak = 0;
 let gameTime, speed = 1; // variable for spawn timing
 let gameOver = false;
+let gameStarted = false;
 let health = 10;
 let particles = [];
+let matchCounter = 0;
+let totalCounter = 0;
+let scoreStorage = [];
+
+// check if localStorage exists, fill up store if it exists
+const getFromLocalStorage = () => {
+  if (localStorage.getItem('store')) {
+    scoreStorage = JSON.parse(localStorage.getItem('store'));
+  } else {
+    console.log('nothing in localStorage');
+  }
+}
+
+const setToLocalStorage = () => {
+  localStorage.setItem('store', JSON.stringify(scoreStorage));
+}
 
 const canvas = document.querySelector('.display');
 const context = canvas.getContext('2d');
@@ -95,12 +112,16 @@ const checkIncreaseSpeed = () => {
 }
 
 const checkKey = (e) => {
+  if (!gameStarted) {
+    return;
+  }
   const keyCode = e.keyCode;
   const char = String.fromCharCode(keyCode + 32);
+  totalCounter++;
 
   const instance = displayedChars.find(charInstance => charInstance.text === char)
   if (instance) {
-    console.log('solved');
+    matchCounter++;
     solvedChars.push(instance.id);
 
     addScore()
@@ -117,6 +138,7 @@ const resetGame = () => {
   speed = 1;
   gameOver = false;
   health = 10;
+  matchStore = {};
   document.querySelector('.level').textContent = 1;
   document.querySelector('.health').textContent = 10;
   document.querySelector('.score-tracker').textContent = 0;
@@ -144,15 +166,42 @@ const damageHealth = () => {
   }, 50);
 }
 
+const arrangeScores = () => {
+  scoreStorage.sort((a, b) => b.score - a.score);
+}
+
+const saveScore = (playerScore, playerAccuracy) => {
+  const storeObj = { score: playerScore, accuracy: playerAccuracy }
+  scoreStorage.push(storeObj);
+  arrangeScores();
+  setToLocalStorage();
+}
+
+const displayGameover = () => {
+  if (score !== 0) {
+    i = 0
+    const scoreInterval = setInterval(() => {
+      if (i === score) clearInterval(scoreInterval);
+      document.querySelector('.score').textContent = i;
+      i += 10;
+    }, 1)
+  }
+  // calculate accuracy
+  const accuracy = parseInt((matchCounter / totalCounter) * 100);
+  document.querySelector('.accuracy').textContent = accuracy
+  document.querySelector('.menu-container').style.opacity = '100%';
+  document.querySelector('.gameover').style.display = 'flex';
+  saveScore(score, accuracy);
+}
+
 const setGameOver = () => {
   gameOver = true;
+  gameStarted = false;
   // reset all
   solvedChars = [];
   displayedChars = [];
   // display gameover 
-  document.querySelector('.score').textContent = score;
-  document.querySelector('.menu-container').style.opacity = '100%';
-  document.querySelector('.gameover').style.display = 'flex';
+  displayGameover();
 }
 
 const drawCanvas = () => {
@@ -194,7 +243,6 @@ const newChar = () => {
       damageHealth();
       // game over if not enough health
       if (health <= 0) {
-        console.log('game over!');
         clearInterval(gameTime);
         setGameOver();
       }
@@ -220,13 +268,16 @@ const gameStart = (restart) => {
   if (restart) {
     resetGame();
   }
+  gameStarted = true;
   hideMainMenu();
   spawnChars();
 }
 
+getFromLocalStorage();
 drawCanvas();
 document.querySelector('.game-start-btn').addEventListener('click', gameStart);
 document.querySelector('.game-restart-btn').addEventListener('click',() => gameStart(true));
 document.querySelector('.main-menu-btn').addEventListener('click', backToMainMenu);
+
 window.addEventListener('resize', drawCanvas);
 window.addEventListener('keydown', checkKey);

@@ -96,17 +96,18 @@ body {
   transition: display .5s;
 }
 
-.gameover {
+.gameover,
+.leaderboard {
   display: none;
 }
 
 .title {
-  font-size: 3rem;
+  font-size: 4rem;
   margin-bottom: 50px;
 }
 
 .end-title {
-  font-size: 3rem;
+  font-size: 4rem;
   margin-bottom: 30px;
 }
 
@@ -129,6 +130,10 @@ body {
   color: red;
   border-color: red;
   cursor: pointer;
+}
+
+.final-score {
+  margin-bottom: 30px;
 }
 
 .score {
