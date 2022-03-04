@@ -1,10 +1,8 @@
 const alphabet = "abcdefghijklmnopqrstuvwxyz";
 let solvedChars = [];
 let displayedChars = [];
-let score = 0,
-  streak = 0;
-let gameTime,
-  speed = 1; // variable for spawn timing
+let score = 0, streak = 0;
+let gameTime, speed = 1; // variable for spawn timing
 let gameOver = false;
 let gameStarted = false;
 let health = 10;
@@ -314,14 +312,8 @@ const gameStart = () => {
 getFromLocalStorage();
 drawCanvas();
 document.querySelector(".game-start-btn").addEventListener("click", gameStart);
-document
-  .querySelector(".game-restart-btn")
-  .addEventListener("click", gameStart);
-document
-  .querySelectorAll(".main-menu-btn")
-  .forEach((btn) => btn.addEventListener("click", backToMainMenu));
-document
-  .querySelector(".leaderboard-btn")
-  .addEventListener("click", viewLeaderboard);
+document.querySelector(".game-restart-btn").addEventListener("click", gameStart);
+document.querySelectorAll(".main-menu-btn").forEach((btn) => btn.addEventListener("click", backToMainMenu));
+document.querySelector(".leaderboard-btn").addEventListener("click", viewLeaderboard);
 window.addEventListener("resize", drawCanvas);
 window.addEventListener("keydown", checkKey);
